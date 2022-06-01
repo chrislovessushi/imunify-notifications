@@ -1,0 +1,23 @@
+#!/bin/bash
+
+data=$(cat)
+
+event=$(jq -r '.event' <<< ${data})
+subtype=$(jq -r '.subtype' <<< ${data})
+
+case ${event} in
+    malware-scanning)
+        case ${subtype} in
+            started)
+		path=$(jq -r '.params.path' <<< ${data})
+                echo "A new scan has started for $path" | mail -s "Scan Started" -r "HCHAD.net" "chris@holycityhosting.com"
+            ;;
+            *)
+                echo "Unhandled subtype: ${subtype}" 1>&2
+                exit 1
+        esac
+        ;;
+    *)
+        echo "Unhandled event: ${event}/${subtype}" 1>&2
+        exit 2
+esac
