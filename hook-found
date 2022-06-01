@@ -1,0 +1,24 @@
+#!/bin/bash
+
+data=$(cat)
+
+event=$(jq -r '.event' <<< ${data})
+subtype=$(jq -r '.subtype' <<< ${data})
+
+case ${event} in
+    malware-detected)
+        case ${subtype} in
+            critical)
+                path=$(jq -r '.params.path' <<< ${data})
+		total_mal=$(jq -r '.params.total_malicious' <<< ${data})
+                echo "Malware was discovered in a recent scan of $path. $total_mal malicious files were discovered." | mail -s "Malware Found" -r "NAME" "EMAIL@ADDRESS"
+            ;;
+            *)
+                echo "Unhandled subtype: ${subtype}" 1>&2
+                exit 1
+        esac
+        ;;
+    *)
+        echo "Unhandled event: ${event}/${subtype}" 1>&2
+        exit 2
+esac
