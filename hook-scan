@@ -10,7 +10,7 @@ case ${event} in
         case ${subtype} in
             started)
 		path=$(jq -r '.params.path' <<< ${data})
-                echo "A new scan has started for $path" | mail -s "Scan Started" -r "HCHAD.net" "chris@holycityhosting.com"
+                echo "A new scan has started for $path" | mail -s "Scan Started" -r "NAME" "EMAIL@ADDRESS"
             ;;
             *)
                 echo "Unhandled subtype: ${subtype}" 1>&2
